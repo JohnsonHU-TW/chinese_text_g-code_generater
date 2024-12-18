@@ -275,7 +275,7 @@ def draw_lines_to_svg(text_vector, font_size, padding, x_space, y_space):
         dwg.save()
 
 
-def svg_to_gcode(svg_file, gcode_file, scale=0.1, feed_rate=4000, traval_speed=10000, pen_angles=45):
+def svg_to_gcode(svg_file, gcode_file, feed_rate=4000, traval_speed=10000, pen_angles=45):
     doc = minidom.parse(svg_file)
     svg_element = doc.getElementsByTagName('svg')[0]
 
@@ -300,14 +300,14 @@ def svg_to_gcode(svg_file, gcode_file, scale=0.1, feed_rate=4000, traval_speed=1
         for segment in path:
             if hasattr(segment, 'start'): # 如果是起點，使用G0移動，並確保筆抬起
                 start = segment.start
-                start_y = canvas_height - (start.imag * scale)  # 翻轉Y坐標
+                start_y = canvas_height - (start.imag * 0.1)  # 翻轉Y坐標
                 gcode_lines.append(f"M3 S{pen_angles}")
-                gcode_lines.append(f"G0 F{traval_speed} X{start.real * scale:.3f} Y{start_y:.3f}")
+                gcode_lines.append(f"G0 F{traval_speed} X{start.real * 0.1:.3f} Y{start_y:.3f}")
             if hasattr(segment, 'end'): # 如果是線段，使用G1移動，並放下筆
                 end = segment.end
-                end_y = canvas_height - (end.imag * scale)  # 翻轉Y坐標
+                end_y = canvas_height - (end.imag * 0.1)  # 翻轉Y坐標
                 gcode_lines.append(f"M3 S10")
-                gcode_lines.append(f"G1 F{feed_rate} X{end.real * scale:.3f} Y{end_y:.3f}")
+                gcode_lines.append(f"G1 F{feed_rate} X{end.real * 0.1:.3f} Y{end_y:.3f}")
         gcode_lines.append("M3 S10")  # 確保每條路徑結束後抬筆
     gcode_lines.append("M3 S45")
     gcode_lines.append(f"G1 F{traval_speed} X0 Y0")
